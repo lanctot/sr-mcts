@@ -1,0 +1,187 @@
+%%%%%%%%%%%%%%%%%%%%%%% file typeinst.tex %%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% This is the LaTeX source for the instructions to authors using
+% the LaTeX document class 'llncs.cls' for contributions to
+% the Lecture Notes in Computer Sciences series.
+% http://www.springer.com/lncs       Springer Heidelberg 2006/05/04
+%
+% It may be used as a template for your own input - copy it
+% to a new file with a new name and use it as the basis
+% for your article.
+%
+% NB: the document class 'llncs' has its own and detailed documentation, see
+% ftp://ftp.springer.de/data/pubftp/pub/tex/latex/llncs/latex2e/llncsdoc.pdf
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\documentclass[runningheads,a4paper]{llncs}
+
+\usepackage{graphicx}
+\usepackage{amssymb}
+\setcounter{tocdepth}{3}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{color}
+\usepackage{tikz}
+\usepackage{pgfplots}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{comment}
+\usepackage{booktabs}
+\usepackage{nopageno}
+
+\usepackage[algo2e, noend, noline, linesnumbered]{algorithm2e}
+%\DontPrintSemicolon
+
+\makeatletter
+\newcommand{\pushline}{\Indp}% Indent
+\newcommand{\popline}{\Indm}
+\makeatother
+\DeclareMathOperator{\pess}{pess}
+\DeclareMathOperator{\opti}{opti}
+\newcommand{\argmax}{\operatornamewithlimits{argmax}}
+
+\captionsetup{compatibility=false}
+
+
+
+%\pgfplotsset{compat=newest}
+\usetikzlibrary{arrows,shapes,petri}
+
+\newcommand{\bE}{\mathbb{E}}
+\newcommand{\bI}{\mathbb{I}}
+\newcommand{\cA}{\mathcal{A}}
+\newcommand{\cC}{\mathcal{C}}
+\newcommand{\cD}{\mathcal{D}}
+\newcommand{\cI}{\mathcal{I}}
+\newcommand{\cN}{\mathcal{N}}
+\newcommand{\cO}{\mathcal{O}}
+\newcommand{\cS}{\mathcal{S}}
+\newcommand{\cT}{\mathcal{T}}
+\newcommand{\cZ}{\mathcal{Z}}
+%\newcommand{\Pr}{\mathbf{Pr}}
+\newcommand{\eg}{{\it e.g.,}~}
+\newcommand{\ie}{{\it i.e.,}~}
+
+\newcommand{\redbold}[1]{\textbf{\color{red}#1}} 
+\newcommand{\markw}[1]{\textbf{\color{red} /* #1 (markw) */}} 
+\newcommand{\marcl}[1]{\textbf{\color{red} /* #1 (marcl) */}} 
+
+\newcommand{\toexpand}[1]{{\it $\ll$ #1 ... $\gg$ }} 
+
+\usepackage{url}
+\urldef{\emails}\path|{marc.lanctot,m.winands}@maastrichtuniversity.nl,lisy@agents.fel.cvut.cz|
+%\urldef{\mailsb}\path|anna.kramer, leonie.kunz, christine.reiss, nicole.sator,|
+%\urldef{\mailsc}\path|erika.siebert-cole, peter.strasser, lncs}@springer.com|    
+\newcommand{\keywords}[1]{\par\addvspace\baselineskip
+\noindent\keywordname\enspace\ignorespaces#1}
+
+\begin{document}
+
+\mainmatter  % start of an individual contribution
+
+% first the title is needed
+\title{A Monte Carlo Tree Search Algorithm for Optimizing Simple Regret in Adversarial Search}
+
+% a short form should be given in case it is too long for the running head
+%\titlerunning{Monte Carlo Tree Search in Simultaneous Move Games with Applications to Goofspiel}
+\titlerunning{ }
+
+% the name(s) of the author(s) follow(s) next
+%
+% NB: Chinese authors should write their first names(s) in front of
+% their surnames. This ensures that the names appear correctly in
+% the running heads and the author index.
+%
+\author{ }
+%
+\authorrunning{ }
+% (feature abused for this document to repeat the title also on left hand pages)
+
+% the affiliations are given next; don't give your e-mail address
+% unless you accept that it will be published
+% Agent Technology Center, Dept. of Computer Science, FEE, Czech Technical University in Prague
+% 
+
+\institute{ }
+%\institute{$^1$Department of Knowledge Engineering, \hspace{1cm} $^2$Department of Computer Science\\
+%\hspace{0.5cm}Maastricht University, Netherlands \hspace{1.1cm} Czech Technical University in Prague \\
+%\emails\\
+%}
+
+%Viliam Lis{\' y}
+%Agent Technology Center, Dept. of Computer Science and Engineering, FEE, Czech Technical University in Prague
+
+%
+% NB: a more complex sample for affiliations and the mapping to the
+% corresponding authors can be found in the file "llncs.dem"
+% (search for the string "\mainmatter" where a contribution starts).
+% "llncs.dem" accompanies the document class "llncs.cls".
+%
+
+%\toctitle{}
+%\tocauthor{Authors' Instructions}
+
+\maketitle
+
+
+\begin{abstract}
+Abstract
+\end{abstract}
+
+\section{Introduction}
+
+Suppose a trial is setup such that a player has $a \in [[K]] = \{ 1, 2, \cdots , K \}$ actions which can be 
+repeatedly chosen over $t \in [[T]] = \{ 1, 2, \cdots, T \}$ trials. 
+At each step, the player receives a utility $u(a^t) \sim D_a$ according to some underlying fixed 
+distribution $D_a$. Suppose further that the play employs a randomized algorithm $A(t)$ which outputs
+some $a$ at time $t$. 
+
+Cumulative (external) regret is defined to be the regret of having not played the best single action 
+in hindsight, 
+
+\begin{equation}
+R_c = \bE \left[ \max_{a' \in [[K]]} \left\{ \sum_{t=1}^T u(a') - \sum_{t=1}^T u(A(t)) \right\} \right].
+\end{equation}
+
+In other words, the regret is assumulated at every step of the algorithm. In contrast, 
+suppose actions taken on trials $1, 2, \ldots, T-1$ are taken under some realistic ``simulated environment''
+that represents the true online decision problem, and the only {\it real} decision is made at step $T$ 
+after having played $T-1$ fake simulations. In contrast, simple regret~\cite{Bubeck11Pure} quantifies only 
+the regret for choose the action at step $T$
+
+\begin{equation}
+R_s = \bE \left[  \max_{a' \in [[K]]} \left\{ u(a') - u(A(T)) \right\} \right].
+\end{equation}
+
+In recent years, simple regret has been proposed as a new criterion for assessing the performance of 
+Monte Carlo Tree Search algorithms~\cite{Tolpin12MCTSSR,Feldman12BRUE}. This is a naturally fitting quantity 
+to opitmize in the MCTS setting, since in reality all of the $t-1$ trials are indeed applied in a synthetic
+tree built only for the purposes of simulation. The final move chosen after the simulations are done is the 
+one that really counts, since it is played in the real game. 
+
+In this paper, we present a new Monte Carlo Tree Search algorithm that provably optimizes simple regret 
+asymptotically faster than the most widely-used MCTS algorithm, UCT~\cite{UCT}, and empirically validate 
+our results in $X$ games: bla, bla, and bla. 
+We show that the driving force behind simple regret optimization (increased exploration) has practical 
+problem in games, especially at low search times and without informed simulation policies. On the other hand, 
+we show that algorithms based on cumulative regret perform particularly well in comparison under these 
+limited circumstances. 
+Inspired by this analysis, we propose a hybrid algorithm that begins with an explorative iterative-deepening 
+style depth-limited search that applies a specific exploration/removal policy. 
+Upon reaching its depth limit frontier, where the computational budget is lower, the algorithm drops 
+down to best-first UCT. 
+We show our algorithm generalizes both previous algorithms in \cite{Tolpin12MCTSSR} and a recent algoritm, 
+SHOT~\cite{Cazenave14SHOT}, an MCTS algorithm based on sequential-halving~\cite{Karnin13SH}. We propose an 
+additional removal policy based on successive rejects~\cite{Audibert10Best}, and thoroughly evaluate the
+algorithms in $X$ games: bla, bla, and bla. We show that our algorithm outperforms UCT and every previous 
+simple regret optimiation algorithm to date. 
+
+
+
+
+\bibliographystyle{splncs03}
+\bibliography{sr-mcts}
+
+\end{document}
