@@ -142,17 +142,22 @@ Cumulative (external) regret is defined to be the regret of having not played th
 in hindsight, 
 
 \begin{equation}
-R_c = \bE \left[ \max_{a' \in [[K]]} \left\{ \sum_{t=1}^T u(a') - \sum_{t=1}^T u(A(t)) \right\} \right].
+R_c^T = \bE \left[ \max_{a' \in [[K]]} \left\{ \sum_{t=1}^T u(a') - \sum_{t=1}^T u(A(t)) \right\} \right].
 \end{equation}
 
-In other words, the regret is assumulated at every step of the algorithm. In contrast, 
-suppose actions taken on trials $1, 2, \ldots, T-1$ are taken under some realistic ``simulated environment''
-that represents the true online decision problem, and the only {\it real} decision is made at step $T$ 
-after having played $T-1$ fake simulations. In contrast, simple regret~\cite{Bubeck11Pure} quantifies only 
+In other words, the regret is assumulated at every step of the algorithm. There are many algorithms that 
+mimimize cumulative regret~\cite{}, but particularly popular one is Upper Confidence Bounds (UCB)~\cite{UCB}, 
+which is the foundation of the most popular MCTS algorithm, UCT~\cite{UCT}.
+
+Now suppose we change the experimental setup and the 
+actions chosen on trials $1, 2, \ldots, T-1$ are taken under some realistic ``simulated environment''
+that represents the true online decision problem but without committing to the actions chose, 
+and the only {\it real} decision is made at step $T$ 
+after having played $T-1$ simulations. In contrast, simple regret~\cite{Bubeck11Pure} quantifies only 
 the regret for choose the action at step $T$
 
 \begin{equation}
-R_s = \bE \left[  \max_{a' \in [[K]]} \left\{ u(a') - u(A(T)) \right\} \right].
+R_s^T = \bE \left[  \max_{a' \in [[K]]} \left\{ u(a') - u(A(T)) \right\} \right].
 \end{equation}
 
 In recent years, simple regret has been proposed as a new criterion for assessing the performance of 
@@ -162,7 +167,7 @@ tree built only for the purposes of simulation. The final move chosen after the 
 one that really counts, since it is played in the real game. 
 
 In this paper, we present a new Monte Carlo Tree Search algorithm that provably optimizes simple regret 
-asymptotically faster than the most widely-used MCTS algorithm, UCT~\cite{UCT}, and empirically validate 
+asymptotically faster than UCT~\cite{UCT}, and empirically validate 
 our results in $X$ games: bla, bla, and bla. 
 We show that the driving force behind simple regret optimization (increased exploration) has practical 
 problem in games, especially at low search times and without informed simulation policies. On the other hand, 
